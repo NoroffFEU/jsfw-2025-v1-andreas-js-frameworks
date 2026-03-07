@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Product } from "../types/product";
 import Link from "next/link";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, addToCart }: { product: Product; addToCart: () => void }) {
   const onSale = product.discountedPrice != null && product.discountedPrice < product.price ? ((product.price - product.discountedPrice) / product.price) * 100 : false;
   return (
     <article className="flex flex-col rounded-lg bg-white/5 overflow-hidden shadow-sm hover:shadow-lg transition">
@@ -39,7 +39,9 @@ export default function ProductCard({ product }: { product: Product }) {
             <Link href={`/product/${product.id}`} className="rounded-md px-3 py-2 bg-white/5 text-orange-300 hover:bg-orange-600/10 hover:cursor-pointer transition">
               View
             </Link>
-            <button className="rounded-md bg-orange-500 px-3 py-2 text-black font-medium hover:cursor-pointer hover:brightness-95">Add</button>
+            <button className="rounded-md bg-orange-500 px-3 py-2 text-black font-medium hover:cursor-pointer hover:brightness-95" onClick={() => addToCart()}>
+              Add
+            </button>
           </div>
         </div>
       </div>
