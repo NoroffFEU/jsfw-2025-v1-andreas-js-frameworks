@@ -165,7 +165,7 @@ export default function Contact() {
                 )}
               </div>
               <div className="pt-2">
-                <button type="submit" className="rounded-md bg-orange-500 px-5 py-3 text-black font-semibold hover:bg-orange-400 hover:cursor-pointer">
+                <button type="submit" className="rounded-md bg-orange-400 px-5 py-3 text-black font-semibold hover:bg-orange-500 hover:cursor-pointer">
                   Send Message
                 </button>
               </div>
