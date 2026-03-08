@@ -39,8 +39,8 @@ export default function ProductCard({ product, addToCart }: { product: Product; 
             <Link href={`/product/${product.id}`} className="rounded-md px-3 py-2 bg-white/5 text-orange-300 hover:bg-orange-600/10 hover:cursor-pointer transition">
               View
             </Link>
-            <button className="rounded-md bg-orange-500 px-3 py-2 text-black font-medium hover:cursor-pointer hover:brightness-95" onClick={() => addToCart()}>
-              Add
+            <button className="rounded-md bg-orange-400 px-3 py-2 text-black font-medium hover:cursor-pointer hover:brightness-95 hover:bg-orange-500" onClick={() => addToCart()}>
+              Add to Cart
             </button>
           </div>
         </div>
