@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { cart } = useCart();
+  const itemCount = cart.length;
 
   return (
     <header className="w-full bg-black text-white">
@@ -23,8 +26,11 @@ export default function Header() {
           <Link href="/" className="px-3 py-2 rounded-md text-orange-300 hover:bg-orange-600/40 hover:text-orange-200 transition">
             Home
           </Link>
-          <Link href="/cart" className="px-3 py-2 rounded-md text-orange-300 hover:bg-orange-600/40 hover:text-orange-200 transition">
-            Cart
+          <Link href="/cart" className="px-3 py-2 rounded-md text-orange-300 hover:bg-orange-600/40 hover:text-orange-200 transition relative">
+            <span>Cart</span>
+            {itemCount > 0 && (
+              <span className="ml-2 inline-flex items-center justify-center h-5 w-5 rounded-full bg-orange-500 text-black text-xs font-semibold absolute -right-2 -top-2">{itemCount}</span>
+            )}
           </Link>
           <Link href="/contact" className="px-3 py-2 rounded-md text-orange-300 hover:bg-orange-600/40 hover:text-orange-200 transition">
             Contact
