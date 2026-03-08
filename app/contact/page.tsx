@@ -2,8 +2,6 @@
 
 import { useState, ChangeEvent, FocusEvent, SyntheticEvent } from "react";
 import type { ZodError } from "zod";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { useCart } from "../../context/CartContext";
 import { contactSchema, type ContactForm } from "./contactSchema";
 
@@ -69,7 +67,6 @@ export default function Contact() {
 
   return (
     <>
-      <Header />
       <main className="flex-1 flex justify-center">
         <div className="max-w-6xl w-full py-20 px-6">
           <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
@@ -173,7 +170,6 @@ export default function Contact() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

@@ -1,14 +1,12 @@
 "use client";
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Image from "next/image";
 import { FetchProducts } from "../components/FetchProducts";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <>
-      <Header />
       <main className="flex-1 flex justify-center">
         <div className="max-w-7xl w-full pt-8 pb-16 px-6">
           <div className="mb-8">
@@ -19,9 +17,9 @@ export default function Home() {
               <h1 className="text-5xl font-extrabold mb-4">Discover standout products</h1>
               <p className="text-lg text-zinc-300 mb-6">Shop modern products to elevate your lifestyle.</p>
               <div className="flex gap-3">
-                <a href="#shop" className="rounded-md bg-orange-400 px-5 py-3 text-black font-semibold shadow hover:brightness-95 transition hover:bg-orange-500">
-                  Shop Now
-                </a>
+                  <a href="#shop" className="rounded-md bg-orange-400 px-5 py-3 text-black font-semibold shadow hover:brightness-95 transition hover:bg-orange-500">
+                    Shop Now
+                  </a>
               </div>
             </div>
             <div className="flex justify-center md:justify-end">
@@ -40,15 +38,14 @@ export default function Home() {
           <section id="shop">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold">Featured products</h2>
-              <a href="#" className="text-sm text-orange-300 hover:underline">
+              <Link href="/products" className="text-sm text-orange-300 hover:underline">
                 View all
-              </a>
+              </Link>
             </div>
-            <FetchProducts />
+            <FetchProducts limit={12} />
           </section>
         </div>
       </main>
-      <Footer />
     </>
   );
 }
