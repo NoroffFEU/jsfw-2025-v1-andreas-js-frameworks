@@ -19,7 +19,7 @@ export default function Home() {
               <h1 className="text-5xl font-extrabold mb-4">Discover standout products</h1>
               <p className="text-lg text-zinc-300 mb-6">Shop modern products to elevate your lifestyle.</p>
               <div className="flex gap-3">
-                <a href="#shop" className="rounded-md bg-orange-500 px-5 py-3 text-black font-semibold shadow hover:brightness-95 transition">
+                <a href="#shop" className="rounded-md bg-orange-400 px-5 py-3 text-black font-semibold shadow hover:brightness-95 transition hover:bg-orange-500">
                   Shop Now
                 </a>
               </div>
