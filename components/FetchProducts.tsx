@@ -3,11 +3,12 @@
 import { useState, useEffect, useMemo } from "react";
 import { Product } from "../types/product";
 import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import Image from "next/image";
 
-export function FetchProducts({ showGrid = true }: { showGrid?: boolean }) {
+export function FetchProducts({ showGrid = true, limit }: { showGrid?: boolean; limit?: number }) {
   const url = "https://v2.api.noroff.dev/online-shop";
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -63,12 +64,15 @@ export function FetchProducts({ showGrid = true }: { showGrid?: boolean }) {
     return list;
   }, [products, query, sortOption]);
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   try {
     const showList = query.trim().length > 0;
-    const visibleProducts = showList ? filtered : products;
+    let visibleProducts = showList ? filtered : products;
+
+    if (!showList && typeof limit === "number") {
+      visibleProducts = visibleProducts.slice(0, limit);
+    }
 
     return (
       <>
@@ -84,7 +88,17 @@ export function FetchProducts({ showGrid = true }: { showGrid?: boolean }) {
 
               {showList && (
                 <div className="absolute left-0 right-0 top-full mt-2 bg-zinc-900 rounded-md shadow-lg z-50 max-h-80 overflow-auto">
-                  {filtered.length > 0 ? (
+                  {loading ? (
+                    Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-3 p-3 border-b border-zinc-800">
+                        <div className="h-10 w-10 bg-zinc-800 rounded" />
+                        <div className="flex-1">
+                          <div className="h-4 bg-zinc-800 rounded w-3/4 mb-2" />
+                          <div className="h-3 bg-zinc-800 rounded w-1/4" />
+                        </div>
+                      </div>
+                    ))
+                  ) : filtered.length > 0 ? (
                     filtered.slice(0, 8).map((product) => (
                       <Link key={product.id} href={`/product/${product.id}`} onClick={() => setQuery("")} className="flex items-center gap-3 p-3 hover:bg-zinc-800 border-b border-zinc-800">
                         <Image src={product.image?.url || ""} alt={product.image?.alt || product.title} width={48} height={48} className="object-cover rounded" unoptimized />
@@ -111,7 +125,13 @@ export function FetchProducts({ showGrid = true }: { showGrid?: boolean }) {
         </div>
 
         {showGrid ? (
-          visibleProducts.length > 0 ? (
+          loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: typeof limit === "number" ? Math.min(limit, 12) : 12 }).map((_, i) => (
+                <ProductCardSkeleton key={`skel-${i}`} />
+              ))}
+            </div>
+          ) : visibleProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
               {visibleProducts.map((product) => (
                 <ProductCard key={product.id} product={product} addToCart={() => addToCart(product)} />

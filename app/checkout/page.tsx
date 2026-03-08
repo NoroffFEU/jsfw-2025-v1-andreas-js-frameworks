@@ -3,8 +3,6 @@
 import { useState, ChangeEvent, SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { ZodError } from "zod";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { useCart } from "../../context/CartContext";
 import { checkoutSchema, type CheckoutForm } from "./checkoutSchema";
 
@@ -68,7 +66,6 @@ export default function CheckoutPage() {
   };
   return (
     <>
-      <Header />
       <main className="flex-1 flex justify-center">
         <div className="max-w-6xl w-full py-12 px-6">
           <h1 className="text-4xl font-bold mb-6">Checkout</h1>
@@ -232,7 +229,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

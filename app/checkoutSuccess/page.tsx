@@ -1,11 +1,8 @@
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import Link from "next/link";
 
 export default function CheckoutSuccess() {
   return (
     <>
-      <Header />
       <main className="flex-1 flex items-center justify-center py-20">
         <div className="max-w-2xl w-full bg-zinc-900 p-8 rounded-md text-center">
           <h1 className="text-3xl font-bold mb-4">Thank you! Your order is complete</h1>
@@ -20,7 +17,6 @@ export default function CheckoutSuccess() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }
