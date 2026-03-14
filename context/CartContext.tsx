@@ -23,15 +23,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    setCart((prev) => {
+      const removed = prev.find((item) => item.id === id);
+      if (!removed) return prev;
+      const newCart = prev.filter((item) => item.id !== id);
+      showToast(`${removed.title} removed from cart`);
+      return newCart;
+    });
   };
 
   const removeOneFromCart = (id: string) => {
     setCart((prev) => {
       const index = prev.findIndex((item) => item.id === id);
       if (index === -1) return prev;
+      const removed = prev[index];
       const copy = [...prev];
       copy.splice(index, 1);
+      showToast(`${removed.title} removed from cart`);
       return copy;
     });
   };
