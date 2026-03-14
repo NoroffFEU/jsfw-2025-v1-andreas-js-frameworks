@@ -12,7 +12,7 @@ export default function Header() {
 
   return (
     <header className="w-full bg-black text-white">
-      <MobileMenu open={open} onClose={() => setOpen(false)} />
+      <MobileMenu open={open} itemCount={itemCount} onClose={() => setOpen(false)} />
       <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-4">
           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-linear-to-br from-orange-400 to-orange-600 shadow-md">
@@ -37,7 +37,16 @@ export default function Header() {
             Contact
           </Link>
         </nav>
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-2">
+          <Link href="/cart" aria-label="Open cart" className="relative rounded-md p-2 bg-white/5 hover:bg-white/10">
+            <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l2 9h11l3-7H7.4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 13l-1 5a2 2 0 002 2h9" />
+              <circle cx="10" cy="20" r="1" fill="currentColor" />
+              <circle cx="18" cy="20" r="1" fill="currentColor" />
+            </svg>
+            {itemCount > 0 && <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-5 w-5 rounded-full bg-orange-500 text-black text-xs font-semibold">{itemCount}</span>}
+          </Link>
           <button onClick={() => setOpen(true)} aria-label="Open menu" className="rounded-md p-2 bg-white/5 hover:bg-white/10">
             <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
