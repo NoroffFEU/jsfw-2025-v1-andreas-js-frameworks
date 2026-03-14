@@ -69,7 +69,7 @@ export default function Contact() {
     <>
       <main className="flex-1 flex justify-center">
         <div className="max-w-6xl w-full py-20 px-6">
-          <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
+          <h1 className="text-3xl font-bold mb-6 text-white">Contact Us</h1>
           <p className="text-lg text-zinc-300 mb-6">Have questions? Get in touch with our support team.</p>
           <div className="w-full mt-6 bg-zinc-900 p-6 rounded-md shadow-sm">
             <form onSubmit={handleSubmit} noValidate className="grid grid-cols-1 gap-4">

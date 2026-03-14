@@ -27,11 +27,11 @@ export default function CartPage() {
   return (
     <>
       <main className="flex-1 flex justify-center">
-        <div className="max-w-6xl w-full h-fit flex-col p-4 my-10 bg-zinc-900 shadow-md rounded-lg text-zinc-300">
-          <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
+        <div className="max-w-6xl w-full py-12 px-6 text-zinc-300">
+          <h1 className="text-3xl font-bold mb-6 text-white">Shopping Cart</h1>
           {items.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-gray-500 mb-4">Your cart is empty.</p>
+              <p className="text-gray-200 mb-4">Your cart is empty.</p>
               <Link href="/" className="text-blue-500 hover:underline">
                 Back to shop
               </Link>
@@ -43,34 +43,44 @@ export default function CartPage() {
                   {items.map(({ product, qty }) => {
                     const unit = product.discountedPrice != null && product.discountedPrice < product.price ? product.discountedPrice : product.price;
                     return (
-                      <li key={product.id} className="py-4 flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-4">
-                          <Image src={product.image.url} alt={product.image.alt} width={100} height={100} className="min-w-25 min-h-25 max-w-25 max-h-25 object-cover rounded" />
-                          <div>
-                            <h2 className="font-semibold">{product.title}</h2>
-                            <div className="text-sm text-zinc-500">
-                              {product.description.slice(0, 80)}
-                              {product.description.length > 80 ? "…" : ""}
+                      <li key={product.id} className="py-4">
+                        <div className="bg-zinc-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                          <Image src={product.image.url} alt={product.image.alt} width={160} height={120} className="w-full sm:w-32 h-52 sm:h-24 object-cover rounded" />
+                          <div className="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                              <h2 className="font-semibold">{product.title}</h2>
+                              <div className="text-sm text-zinc-300 mt-1">{product.description}</div>
+                            </div>
+                            <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center border border-zinc-700 rounded overflow-hidden bg-transparent">
+                                  <button onClick={() => removeOneFromCart(product.id)} className="px-2 py-1 sm:px-3 sm:py-1 text-sm hover:cursor-pointer bg-white/5 hover:bg-white/10 text-zinc-100">
+                                    -
+                                  </button>
+                                  <div className="px-3 sm:px-4 text-center text-sm">{qty}</div>
+                                  <button onClick={() => addToCart(product)} className="px-2 py-1 sm:px-3 sm:py-1 text-sm hover:cursor-pointer bg-white/5 hover:bg-white/10 text-zinc-100">
+                                    +
+                                  </button>
+                                </div>
+                                <button
+                                  onClick={() => removeFromCart(product.id)}
+                                  aria-label="Remove"
+                                  className="sm:hidden text-red-500 text-sm px-2 py-1 rounded hover:cursor-pointer hover:bg-red-600/10"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between sm:justify-end gap-4">
+                                <div className="text-right">
+                                  <div className="font-semibold">{format(unit)}</div>
+                                  <div className="text-sm text-zinc-400">{format(unit * qty)}</div>
+                                </div>
+                                <button onClick={() => removeFromCart(product.id)} className="hidden sm:inline text-red-500 text-sm px-3 py-1 rounded hover:cursor-pointer hover:bg-red-600/10">
+                                  Remove
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-4 w-72 justify-end">
-                          <div className="flex items-center border border-zinc-700 rounded overflow-hidden bg-transparent w-28 justify-center">
-                            <button onClick={() => removeOneFromCart(product.id)} className="px-3 py-1 bg-white/5 hover:bg-white/10 text-zinc-100 hover:cursor-pointer">
-                              -
-                            </button>
-                            <div className="px-4 text-center">{qty}</div>
-                            <button onClick={() => addToCart(product)} className="px-3 py-1 bg-white/5 hover:bg-white/10 text-zinc-100 hover:cursor-pointer">
-                              +
-                            </button>
-                          </div>
-                          <div className="text-right w-28">
-                            <div className="font-semibold">{format(unit)}</div>
-                            <div className="text-sm text-zinc-500">{format(unit * qty)}</div>
-                          </div>
-                          <button onClick={() => removeFromCart(product.id)} className="text-red-500 text-sm hover:bg-red-600/10 px-2 py-1 rounded w-20 hover:cursor-pointer">
-                            Remove
-                          </button>
                         </div>
                       </li>
                     );
@@ -80,11 +90,11 @@ export default function CartPage() {
               <aside className="md:col-span-1 bg-zinc-800 p-6 rounded text-zinc-200">
                 <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm text-zinc-500">Items</span>
+                  <span className="text-sm text-zinc-300">Items</span>
                   <span className="font-medium">{totalItems}</span>
                 </div>
                 <div className="flex justify-between mb-4">
-                  <span className="text-sm text-zinc-500">Subtotal</span>
+                  <span className="text-sm text-zinc-300">Subtotal</span>
                   <span className="font-semibold">{format(totalPrice)}</span>
                 </div>
                 <button onClick={clearCart} className="w-full mb-3 px-4 py-2 border border-zinc-700 rounded hover:cursor-pointer hover:bg-white/5 text-zinc-200">

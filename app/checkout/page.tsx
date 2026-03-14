@@ -68,7 +68,7 @@ export default function CheckoutPage() {
     <>
       <main className="flex-1 flex justify-center">
         <div className="max-w-6xl w-full py-12 px-6">
-          <h1 className="text-4xl font-bold mb-6">Checkout</h1>
+          <h1 className="text-3xl font-bold mb-6 text-white">Checkout</h1>
           <div className="grid md:grid-cols-3 gap-8">
             <form onSubmit={handleSubmit} className="md:col-span-2 bg-zinc-900 p-6 rounded shadow text-zinc-200">
               <h2 className="text-2xl font-semibold mb-4">Billing details</h2>
