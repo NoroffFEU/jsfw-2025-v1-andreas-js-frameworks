@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { ZodError } from "zod";
 import { useCart } from "../../context/CartContext";
 import { checkoutSchema, type CheckoutForm } from "./checkoutSchema";
+import { OrderLine } from "../../types/orderLine";
 
 type FormState = CheckoutForm;
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -13,16 +14,24 @@ export default function CheckoutPage() {
   const { cart, clearCart, showToast } = useCart();
   const router = useRouter();
 
-  const items = cart.reduce<Record<string, { title: string; qty: number; price: number }>>((acc, p) => {
-    if (acc[p.id]) acc[p.id].qty++;
-    else acc[p.id] = { title: p.title, qty: 1, price: p.discountedPrice && p.discountedPrice < p.price ? p.discountedPrice : p.price };
-    return acc;
-  }, {});
+  const getUnitPrice = (product: (typeof cart)[number]) => (product.discountedPrice != null && product.discountedPrice < product.price ? product.discountedPrice : product.price);
 
-  const summary = Object.values(items);
-  const subtotal = summary.reduce((s, it) => s + it.price * it.qty, 0);
+  const groupCartItems = (cartItems: typeof cart): OrderLine[] => {
+    const map = new Map<string, OrderLine>();
+    for (const product of cartItems) {
+      const existing = map.get(product.id);
+      const price = getUnitPrice(product);
+      if (existing) existing.quantity++;
+      else map.set(product.id, { productId: product.id, title: product.title, quantity: 1, unitPrice: price });
+    }
+    return Array.from(map.values());
+  };
 
-  const [form, setForm] = useState<FormState>({ name: "", email: "", address: "", city: "", zip: "" });
+  const orderLines = groupCartItems(cart);
+  const subtotal = orderLines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+
+  const initialForm: FormState = { name: "", email: "", address: "", city: "", zip: "" };
+  const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<FormErrors>({});
 
   const extractFieldErrors = (err: ZodError<FormState>) => {
@@ -35,6 +44,16 @@ export default function CheckoutPage() {
       mapped[k]!.push(msg);
     }
     return mapped;
+  };
+
+  const handleFieldBlur = (field: keyof FormState) => {
+    const res = checkoutSchema.safeParse(form);
+    if (!res.success) {
+      const fieldErrors = extractFieldErrors(res.error);
+      setErrors((s) => ({ ...s, [field]: fieldErrors[field]?.[0] }));
+    } else {
+      setErrors((s) => ({ ...s, [field]: undefined }));
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,11 +76,10 @@ export default function CheckoutPage() {
       });
       return;
     }
-
     setErrors({});
-    showToast?.(`Order submitted — ${summary.length} line(s), total $${subtotal.toFixed(2)}.`);
+    showToast?.(`Order submitted — ${orderLines.length} line(s), total $${subtotal.toFixed(2)}.`);
     clearCart?.();
-    setForm({ name: "", email: "", address: "", city: "", zip: "" });
+    setForm(initialForm);
     router.push("../checkoutSuccess");
   };
   return (
@@ -83,15 +101,7 @@ export default function CheckoutPage() {
                   id="name"
                   value={form.name}
                   onChange={handleChange}
-                  onBlur={() => {
-                    const res = checkoutSchema.safeParse(form);
-                    if (!res.success) {
-                      const fe = extractFieldErrors(res.error);
-                      setErrors((s) => ({ ...s, name: fe.name?.[0] }));
-                    } else {
-                      setErrors((s) => ({ ...s, name: undefined }));
-                    }
-                  }}
+                  onBlur={() => handleFieldBlur("name")}
                   className="mt-1 block w-full rounded bg-white/5 px-3 py-2 text-zinc-100"
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
@@ -106,15 +116,7 @@ export default function CheckoutPage() {
                   id="email"
                   value={form.email}
                   onChange={handleChange}
-                  onBlur={() => {
-                    const res = checkoutSchema.safeParse(form);
-                    if (!res.success) {
-                      const fe = extractFieldErrors(res.error);
-                      setErrors((s) => ({ ...s, email: fe.email?.[0] }));
-                    } else {
-                      setErrors((s) => ({ ...s, email: undefined }));
-                    }
-                  }}
+                  onBlur={() => handleFieldBlur("email")}
                   className="mt-1 block w-full rounded bg-white/5 px-3 py-2 text-zinc-100"
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
@@ -128,15 +130,7 @@ export default function CheckoutPage() {
                   id="address"
                   value={form.address}
                   onChange={handleChange}
-                  onBlur={() => {
-                    const res = checkoutSchema.safeParse(form);
-                    if (!res.success) {
-                      const fe = extractFieldErrors(res.error);
-                      setErrors((s) => ({ ...s, address: fe.address?.[0] }));
-                    } else {
-                      setErrors((s) => ({ ...s, address: undefined }));
-                    }
-                  }}
+                  onBlur={() => handleFieldBlur("address")}
                   className="mt-1 block w-full rounded bg-white/5 px-3 py-2 text-zinc-100"
                   rows={3}
                 />
@@ -153,15 +147,7 @@ export default function CheckoutPage() {
                     id="city"
                     value={form.city}
                     onChange={handleChange}
-                    onBlur={() => {
-                      const res = checkoutSchema.safeParse(form);
-                      if (!res.success) {
-                        const fe = extractFieldErrors(res.error);
-                        setErrors((s) => ({ ...s, city: fe.city?.[0] }));
-                      } else {
-                        setErrors((s) => ({ ...s, city: undefined }));
-                      }
-                    }}
+                    onBlur={() => handleFieldBlur("city")}
                     className="mt-1 block w-full rounded bg-white/5 px-3 py-2 text-zinc-100"
                   />
                   {errors.city && <p className="mt-1 text-sm text-red-400">{errors.city}</p>}
@@ -176,15 +162,7 @@ export default function CheckoutPage() {
                     id="zip"
                     value={form.zip}
                     onChange={handleChange}
-                    onBlur={() => {
-                      const res = checkoutSchema.safeParse(form);
-                      if (!res.success) {
-                        const fe = extractFieldErrors(res.error);
-                        setErrors((s) => ({ ...s, zip: fe.zip?.[0] }));
-                      } else {
-                        setErrors((s) => ({ ...s, zip: undefined }));
-                      }
-                    }}
+                    onBlur={() => handleFieldBlur("zip")}
                     className="mt-1 block w-full rounded bg-white/5 px-3 py-2 text-zinc-100"
                   />
                   {errors.zip && <p className="mt-1 text-sm text-red-400">{errors.zip}</p>}
@@ -197,7 +175,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setForm({ name: "", email: "", address: "", city: "", zip: "" });
+                    setForm(initialForm);
                     setErrors({});
                   }}
                   className="px-4 py-3 border border-zinc-700 rounded text-zinc-200 hover:cursor-pointer hover:bg-zinc-800"
@@ -209,15 +187,15 @@ export default function CheckoutPage() {
             <aside className="bg-zinc-800 p-6 rounded text-zinc-200">
               <h2 className="text-2xl font-semibold mb-4">Order summary</h2>
               <ul className="divide-y divide-zinc-700 mb-4">
-                {summary.map((it) => (
-                  <li key={it.title} className="py-3 flex justify-between">
+                {orderLines.map((line) => (
+                  <li key={line.productId} className="py-3 flex justify-between">
                     <div>
-                      <div className="font-medium">{it.title}</div>
+                      <div className="font-medium">{line.title}</div>
                       <div className="text-sm text-zinc-500">
-                        {it.qty} × ${it.price.toFixed(2)}
+                        {line.quantity} × ${line.unitPrice.toFixed(2)}
                       </div>
                     </div>
-                    <div className="font-semibold">${(it.price * it.qty).toFixed(2)}</div>
+                    <div className="font-semibold">${(line.unitPrice * line.quantity).toFixed(2)}</div>
                   </li>
                 ))}
               </ul>

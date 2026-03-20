@@ -7,22 +7,25 @@ import Image from "next/image";
 export default function CartPage() {
   const { cart, addToCart, removeFromCart, removeOneFromCart, clearCart } = useCart();
 
-  const grouped = cart.reduce<Record<string, { product: (typeof cart)[number]; qty: number }>>((acc, item) => {
-    if (acc[item.id]) acc[item.id].qty++;
-    else acc[item.id] = { product: item, qty: 1 };
-    return acc;
-  }, {});
+  const getUnitPrice = (product: (typeof cart)[number]) => (product.discountedPrice != null && product.discountedPrice < product.price ? product.discountedPrice : product.price);
 
-  const items = Object.values(grouped);
+  const groupCartItems = (cartItems: typeof cart) => {
+    const map = new Map<string, { product: (typeof cart)[number]; quantity: number }>();
+    for (const item of cartItems) {
+      const entry = map.get(item.id);
+      if (entry) entry.quantity++;
+      else map.set(item.id, { product: item, quantity: 1 });
+    }
+    return Array.from(map.values());
+  };
+
+  const items = groupCartItems(cart);
 
   const totalItems = cart.length;
 
-  const totalPrice = items.reduce((sum, it) => {
-    const unit = it.product.discountedPrice != null && it.product.discountedPrice < it.product.price ? it.product.discountedPrice : it.product.price;
-    return sum + unit * it.qty;
-  }, 0);
+  const totalPrice = items.reduce((sum, item) => sum + getUnitPrice(item.product) * item.quantity, 0);
 
-  const format = (n: number) => `$${n.toFixed(2)}`;
+  const priceFormat = (price: number) => `$${price.toFixed(2)}`;
 
   return (
     <>
@@ -40,7 +43,7 @@ export default function CartPage() {
             <div className="grid md:grid-cols-3 gap-8">
               <section className="md:col-span-2">
                 <ul className="divide-y divide-zinc-700">
-                  {items.map(({ product, qty }) => {
+                  {items.map(({ product, quantity }) => {
                     const unit = product.discountedPrice != null && product.discountedPrice < product.price ? product.discountedPrice : product.price;
                     return (
                       <li key={product.id} className="py-4">
@@ -57,7 +60,7 @@ export default function CartPage() {
                                   <button onClick={() => removeOneFromCart(product.id)} className="px-2 py-1 sm:px-3 sm:py-1 text-sm hover:cursor-pointer bg-white/5 hover:bg-white/10 text-zinc-100">
                                     -
                                   </button>
-                                  <div className="px-3 sm:px-4 text-center text-sm">{qty}</div>
+                                  <div className="px-3 sm:px-4 text-center text-sm">{quantity}</div>
                                   <button onClick={() => addToCart(product)} className="px-2 py-1 sm:px-3 sm:py-1 text-sm hover:cursor-pointer bg-white/5 hover:bg-white/10 text-zinc-100">
                                     +
                                   </button>
@@ -72,8 +75,8 @@ export default function CartPage() {
                               </div>
                               <div className="flex items-center justify-between sm:justify-end gap-4">
                                 <div className="text-right">
-                                  <div className="font-semibold">{format(unit)}</div>
-                                  <div className="text-sm text-zinc-400">{format(unit * qty)}</div>
+                                  <div className="font-semibold">{priceFormat(unit)}</div>
+                                  <div className="text-sm text-zinc-400">{priceFormat(unit * quantity)}</div>
                                 </div>
                                 <button onClick={() => removeFromCart(product.id)} className="hidden sm:inline text-red-500 text-sm px-3 py-1 rounded hover:cursor-pointer hover:bg-red-600/10">
                                   Remove
@@ -95,13 +98,13 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between mb-4">
                   <span className="text-sm text-zinc-300">Subtotal</span>
-                  <span className="font-semibold">{format(totalPrice)}</span>
+                  <span className="font-semibold">{priceFormat(totalPrice)}</span>
                 </div>
                 <button onClick={clearCart} className="w-full mb-3 px-4 py-2 border border-zinc-700 rounded hover:cursor-pointer hover:bg-white/5 text-zinc-200">
                   Clear cart
                 </button>
                 <Link href="/checkout" className="w-full block text-center px-4 py-3 bg-orange-400 text-black hover:cursor-pointer font-bold rounded hover:bg-orange-500">
-                  Checkout — {format(totalPrice)}
+                  Checkout — {priceFormat(totalPrice)}
                 </Link>
               </aside>
             </div>
