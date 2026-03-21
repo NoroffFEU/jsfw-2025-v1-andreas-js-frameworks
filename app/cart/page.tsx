@@ -103,7 +103,7 @@ export default function CartPage() {
                 <button onClick={clearCart} className="w-full mb-3 px-4 py-2 border border-zinc-700 rounded hover:cursor-pointer hover:bg-white/5 text-zinc-200">
                   Clear cart
                 </button>
-                <Link href="/checkout" className="w-full block text-center px-4 py-3 bg-orange-400 text-black hover:cursor-pointer font-bold rounded hover:bg-orange-500">
+                <Link href="/checkoutSuccess" className="w-full block text-center px-4 py-3 bg-orange-400 text-black hover:cursor-pointer font-bold rounded hover:bg-orange-500">
                   Checkout — {priceFormat(totalPrice)}
                 </Link>
               </aside>

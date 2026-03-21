@@ -1,6 +1,11 @@
+"use client";
+
+import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 
 export default function CheckoutSuccess() {
+  const { clearCart } = useCart();
+  clearCart();
   return (
     <>
       <main className="flex-1 flex items-center justify-center py-20">
@@ -10,9 +15,6 @@ export default function CheckoutSuccess() {
           <div className="flex items-center justify-center gap-4">
             <Link href="/" className="inline-block bg-orange-400 text-black font-semibold px-5 py-3 rounded hover:bg-orange-500 hover:cursor-pointer">
               Continue shopping
-            </Link>
-            <Link href="/" className="inline-block text-sm text-zinc-300 underline">
-              View order details
             </Link>
           </div>
         </div>
