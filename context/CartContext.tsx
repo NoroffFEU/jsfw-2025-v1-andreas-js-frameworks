@@ -11,9 +11,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const toastTimeout = useRef<number | null>(null);
 
-  const addToCart = (product: Product) => {
-    setCart((prev) => [...prev, product]);
-    showToast(`${product.title} added to cart`);
+  const addToCart = (item: Product) => {
+    setCart((prev) => [...prev, item]);
+    showToast(`${item.title} added to cart`);
   };
 
   const showToast = (message: string) => {
