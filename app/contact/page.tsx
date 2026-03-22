@@ -1,68 +1,43 @@
 "use client";
 
-import { useState, ChangeEvent, FocusEvent, SyntheticEvent } from "react";
-import type { ZodError } from "zod";
+import type { z } from "zod";
 import { useCart } from "../../context/CartContext";
-import { contactSchema, type ContactForm } from "./contactSchema";
-
-type FormState = ContactForm;
-type FormErrors = Partial<Record<keyof FormState, string>>;
+import { useForm, FieldErrors } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ContactSchema } from "./ContactSchema";
 
 export default function Contact() {
-  const [form, setForm] = useState<FormState>({ fullName: "", subject: "", email: "", message: "" });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: zodResolver(ContactSchema),
+    defaultValues: {
+      fullName: "",
+      subject: "",
+      email: "",
+      message: "",
+    },
+    mode: "onBlur",
+  });
 
   const { showToast } = useCart();
 
-  const extractFieldErrors = (err: ZodError<FormState>) => {
-    const mapped: Partial<Record<keyof FormState, string[]>> = {};
-    for (const issue of err.issues) {
-      if (!issue.path || issue.path.length === 0) continue;
-      const k = issue.path[0] as keyof FormState;
-      const msg = issue.message ?? String(issue);
-      if (!mapped[k]) mapped[k] = [];
-      mapped[k]!.push(msg);
-    }
-    return mapped;
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    const key = name as keyof FormState;
-    setForm((s) => ({ ...s, [key]: value }) as FormState);
-    setErrors((s) => ({ ...s, [key]: undefined }));
-  };
-
-  const handleBlur = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name } = e.target;
-    const key = name as keyof FormState;
-    const result = contactSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors = extractFieldErrors(result.error);
-      const msg = fieldErrors[key]?.[0];
-      setErrors((s) => ({ ...s, [key]: msg }));
-    } else {
-      setErrors((s) => ({ ...s, [key]: undefined }));
-    }
-  };
-
-  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const parsed = contactSchema.safeParse(form);
-    if (!parsed.success) {
-      const fieldErrors = extractFieldErrors(parsed.error);
-      setErrors({
-        fullName: fieldErrors.fullName?.[0],
-        subject: fieldErrors.subject?.[0],
-        email: fieldErrors.email?.[0],
-        message: fieldErrors.message?.[0],
-      });
-      return;
-    }
-
+  const onSubmit = () => {
     showToast?.("Message sent. Thank you!");
-    setForm({ fullName: "", subject: "", email: "", message: "" });
-    setErrors({});
+    reset();
+  };
+
+  const onError = (errors: FieldErrors<z.infer<typeof ContactSchema>>) => {
+    const firstErrorKey = Object.keys(errors)[0];
+    if (firstErrorKey) {
+      const fieldElement = document.getElementsByName(`[name="${firstErrorKey}"]`);
+      if (fieldElement && fieldElement[0]) {
+        fieldElement[0].focus();
+      }
+    }
   };
 
   return (
@@ -72,7 +47,7 @@ export default function Contact() {
           <h1 className="text-3xl font-bold mb-6 text-white">Contact Us</h1>
           <p className="text-lg text-zinc-300 mb-6">Have questions? Get in touch with our support team.</p>
           <div className="w-full mt-6 bg-zinc-900 p-6 rounded-md shadow-sm">
-            <form onSubmit={handleSubmit} noValidate className="grid grid-cols-1 gap-4">
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="grid grid-cols-1 gap-4">
               <div className="flex flex-col">
                 <label htmlFor="fullName">
                   <span className="text-sm font-medium text-zinc-200 mb-1">Full Name</span>
@@ -80,18 +55,14 @@ export default function Contact() {
                 <input
                   type="text"
                   id="fullName"
-                  name="fullName"
-                  value={form.fullName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.fullName}
-                  aria-describedby={errors.fullName ? "fullName-error" : undefined}
+                  {...register("fullName")}
+                  aria-invalid={errors.fullName ? "true" : "false"}
                   className="w-full rounded-md bg-zinc-800 px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
                 {errors.fullName && (
                   <p id="fullName-error" className="mt-1 text-sm text-red-400">
-                    {errors.fullName}
+                    {errors.fullName.message}
                   </p>
                 )}
               </div>
@@ -102,18 +73,14 @@ export default function Contact() {
                 <input
                   type="text"
                   id="subject"
-                  name="subject"
-                  value={form.subject}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.subject}
-                  aria-describedby={errors.subject ? "subject-error" : undefined}
+                  {...register("subject")}
+                  aria-invalid={errors.subject ? "true" : "false"}
                   className="w-full rounded-md bg-zinc-800 px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
                 {errors.subject && (
                   <p id="subject-error" className="mt-1 text-sm text-red-400">
-                    {errors.subject}
+                    {errors.subject.message}
                   </p>
                 )}
               </div>
@@ -124,18 +91,14 @@ export default function Contact() {
                 <input
                   type="email"
                   id="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "email-error" : undefined}
+                  {...register("email")}
+                  aria-invalid={errors.email ? "true" : "false"}
                   className="w-full rounded-md bg-zinc-800 px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
                 {errors.email && (
                   <p id="email-error" className="mt-1 text-sm text-red-400">
-                    {errors.email}
+                    {errors.email.message}
                   </p>
                 )}
               </div>
@@ -145,25 +108,22 @@ export default function Contact() {
                 </label>
                 <textarea
                   id="message"
-                  name="message"
                   rows={6}
-                  value={form.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.message}
+                  {...register("message")}
+                  aria-invalid={errors.message ? "true" : "false"}
                   aria-describedby={errors.message ? "message-error" : undefined}
                   className="w-full rounded-md bg-zinc-800 px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-vertical"
                   required
                 />
                 {errors.message && (
                   <p id="message-error" className="mt-1 text-sm text-red-400">
-                    {errors.message}
+                    {errors.message.message}
                   </p>
                 )}
               </div>
               <div className="pt-2">
-                <button type="submit" className="rounded-md bg-orange-400 px-5 py-3 text-black font-semibold hover:bg-orange-500 hover:cursor-pointer">
-                  Send Message
+                <button type="submit" disabled={isSubmitting} className="rounded-md bg-orange-400 px-5 py-3 text-black font-semibold hover:bg-orange-500 hover:cursor-pointer">
+                  {isSubmitting ? "Sending..." : "Send message"}
                 </button>
               </div>
             </form>
