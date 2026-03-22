@@ -4,7 +4,7 @@ import type { z } from "zod";
 import { useCart } from "../../context/CartContext";
 import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ContactSchema } from "./ContactSchema";
+import { contactSchema } from "./contactSchema";
 
 export default function Contact() {
   const {
@@ -13,7 +13,7 @@ export default function Contact() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
-    resolver: zodResolver(ContactSchema),
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       fullName: "",
       subject: "",
@@ -30,7 +30,7 @@ export default function Contact() {
     reset();
   };
 
-  const onError = (errors: FieldErrors<z.infer<typeof ContactSchema>>) => {
+  const onError = (errors: FieldErrors<z.infer<typeof contactSchema>>) => {
     const firstErrorKey = Object.keys(errors)[0];
     if (firstErrorKey) {
       const fieldElement = document.getElementsByName(`[name="${firstErrorKey}"]`);
