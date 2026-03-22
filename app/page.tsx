@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { FetchProducts } from "../components/FetchProducts";
 import Link from "next/link";
 
 export default function Home() {
+  const [sortOption, setSortOption] = useState("featured");
   return (
     <>
       <main className="flex-1 flex justify-center">
@@ -40,9 +42,9 @@ export default function Home() {
               </Link>
             </div>
             <div className="mb-8">
-              <FetchProducts showGrid={false} />
+              <FetchProducts showGrid={false} sortOption={sortOption} setSortOption={setSortOption} />
             </div>
-            <FetchProducts limit={12} showSearch={false} />
+            <FetchProducts limit={12} showSearch={false} sortOption={sortOption} setSortOption={setSortOption} />
           </section>
         </div>
       </main>
