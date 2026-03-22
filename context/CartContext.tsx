@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useRef } from "react";
+import { createContext, useContext, useState, ReactNode, useRef, useCallback } from "react";
 import { Product } from "../types/product";
 import { CartContextType } from "../types/cartContextType";
 
@@ -44,7 +44,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const clearCart = () => setCart([]);
+  const clearCart = useCallback(() => setCart([]), [setCart]);
 
   const clearToast = () => {
     setToastMessage(null);

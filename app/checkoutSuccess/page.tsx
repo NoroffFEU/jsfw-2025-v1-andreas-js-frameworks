@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 
 export default function CheckoutSuccess() {
   const { clearCart } = useCart();
-  clearCart();
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
   return (
     <>
       <main className="flex-1 flex items-center justify-center py-20">
