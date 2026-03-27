@@ -11,7 +11,7 @@ export default function CheckoutSuccess() {
   }, [clearCart]);
   return (
     <>
-      <main className="flex-1 flex items-center justify-center py-20">
+      <main className="flex-1 flex items-center justify-center py-20 px-6">
         <div className="max-w-2xl w-full bg-zinc-900 p-8 rounded-md text-center">
           <h1 className="text-3xl font-bold mb-4">Thank you! Your order is complete</h1>
           <p className="text-zinc-300 mb-6">We have received your order and sent a confirmation to your email.</p>
