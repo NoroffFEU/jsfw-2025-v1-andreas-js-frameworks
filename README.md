@@ -2,6 +2,8 @@
 
 This project is for the JS Frameworks course. The task was to build a fully functional online shop using React and Next.js. The project should include fetching and displaying products, displaying product informasjon on a single product details page, search and sort functionality, shopping cart system, checkout success page and contact page.
 
+The website: [https://javascript-frameworks.vercel.app/](https://javascript-frameworks.vercel.app/)
+
 ## Getting Started
 
 ### Install
