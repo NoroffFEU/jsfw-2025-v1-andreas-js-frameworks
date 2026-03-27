@@ -8,7 +8,7 @@ import MobileMenu from "./MobileMenu";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { cart } = useCart();
-  const itemCount = cart.length;
+  const itemCount = cart.reduce((sum, it) => sum + (it.quantity ?? 0), 0);
 
   return (
     <header className="w-full bg-black text-white">
