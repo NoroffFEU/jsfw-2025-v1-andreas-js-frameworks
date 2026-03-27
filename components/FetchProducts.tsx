@@ -8,7 +8,19 @@ import { useCart } from "../context/CartContext";
 import SearchProducts from "./SearchProducts";
 import SortProducts from "./SortProducts";
 
-export function FetchProducts({ showGrid = true, showSearch = true, limit, sortOption: controlledSortOption, setSortOption: controlledSetSortOption }: { showGrid?: boolean; showSearch?: boolean; limit?: number; sortOption?: string; setSortOption?: (option: string) => void }) {
+export function FetchProducts({
+  showGrid = true,
+  showSearch = true,
+  limit,
+  sortOption: controlledSortOption,
+  setSortOption: controlledSetSortOption,
+}: {
+  showGrid?: boolean;
+  showSearch?: boolean;
+  limit?: number;
+  sortOption?: string;
+  setSortOption?: (option: string) => void;
+}) {
   const url = "https://v2.api.noroff.dev/online-shop";
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,17 +48,16 @@ export function FetchProducts({ showGrid = true, showSearch = true, limit, sortO
   }, []);
 
   const searchResults = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length === 0) return [] as Product[];
-    return products.filter((p) => {
-      const inTitle = p.title?.toLowerCase().includes(q);
-      const inDesc = p.description?.toLowerCase().includes(q);
-      const inTags = Array.isArray(p.tags) && p.tags.join(" ").toLowerCase().includes(q);
+    const search = query.trim().toLowerCase();
+    if (search.length === 0) return [] as Product[];
+    return products.filter((product) => {
+      const inTitle = product.title?.toLowerCase().includes(search);
+      const inDesc = product.description?.toLowerCase().includes(search);
+      const inTags = Array.isArray(product.tags) && product.tags.join(" ").toLowerCase().includes(search);
       return inTitle || inDesc || inTags;
     });
   }, [products, query]);
 
-  // active sort state (controlled by parent or local)
   const sortOption = controlledSortOption ?? localSortOption;
   const setSortOption = controlledSetSortOption ?? setLocalSortOption;
 
@@ -111,6 +122,6 @@ export function FetchProducts({ showGrid = true, showSearch = true, limit, sortO
       </>
     );
   } catch (error) {
-    return <div>Error: {(error as Error).message}</div>;
+    return <div>Error: {(error as Error)message}</div>;
   }
 }
