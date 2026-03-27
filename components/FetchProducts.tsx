@@ -122,6 +122,6 @@ export function FetchProducts({
       </>
     );
   } catch (error) {
-    return <div>Error: {(error as Error)message}</div>;
+    return <div>Error: {(error as Error).message}</div>;
   }
 }
