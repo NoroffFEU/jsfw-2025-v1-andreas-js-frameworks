@@ -7,12 +7,18 @@ import Link from "next/link";
 export default function ProductCard({ product, addToCart }: { product: Product; addToCart: () => void }) {
   const onSale = product.discountedPrice != null && product.discountedPrice < product.price ? ((product.price - product.discountedPrice) / product.price) * 100 : false;
   return (
-    <article className="flex flex-col rounded-lg bg-white/5 overflow-hidden shadow-sm hover:shadow-lg transition">
-      <div className="relative h-52 w-full bg-zinc-800">
-        <Image src={product.image?.url} alt={product.image?.alt || product.title} width={600} height={400} className="object-cover max-h-52" unoptimized />
-        {onSale ? <span className="absolute top-3 left-3 rounded-full bg-black/80 px-3 py-1 font-semibold text-orange-300 ring-1 ring-orange-600/20 shadow-sm">-{onSale.toFixed(0)}%</span> : null}
-      </div>
-      <div className="p-4 flex-1 flex flex-col justify-between">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-lg bg-white/5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
+      <Link
+        href={`/product/${product.id}`}
+        aria-label={`View ${product.title}`}
+        className="absolute inset-0 z-10 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
+      />
+      <div className="relative z-20 flex flex-1 flex-col pointer-events-none">
+        <div className="relative h-52 w-full bg-zinc-800">
+          <Image src={product.image?.url} alt={product.image?.alt || product.title} width={600} height={400} className="object-cover max-h-52" unoptimized />
+          {onSale ? <span className="absolute top-3 left-3 rounded-full bg-black/80 px-3 py-1 font-semibold text-orange-300 ring-1 ring-orange-600/20 shadow-sm">-{onSale.toFixed(0)}%</span> : null}
+        </div>
+      <div className="p-4 flex flex-1 flex-col justify-between">
         <div>
           <h3 className="text-lg font-semibold mb-1">{product.title}</h3>
           <div className="flex items-center gap-3 mb-3">
@@ -36,14 +42,15 @@ export default function ProductCard({ product, addToCart }: { product: Product; 
             ))}
           </div>
           <div className="flex items-center justify-between gap-2">
-            <Link href={`/product/${product.id}`} className="rounded-md px-3 py-2 bg-white/5 text-orange-300 hover:bg-orange-600/10 hover:cursor-pointer transition">
+            <span className="rounded-md px-3 py-2 bg-white/5 text-orange-300 transition">
               View
-            </Link>
-            <button className="rounded-md bg-orange-400 px-3 py-2 text-black font-medium hover:cursor-pointer hover:brightness-95 hover:bg-orange-500" onClick={() => addToCart()}>
+            </span>
+            <button className="relative z-30 pointer-events-auto rounded-md bg-orange-400 px-3 py-2 text-black font-medium hover:cursor-pointer hover:brightness-95 hover:bg-orange-500" onClick={addToCart}>
               Add to Cart
             </button>
           </div>
         </div>
+      </div>
       </div>
     </article>
   );
