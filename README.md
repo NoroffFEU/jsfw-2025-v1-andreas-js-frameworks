@@ -1,6 +1,6 @@
 # JS Frameworks CA
 
-![The Online Store landing page overview image](public/images/landing-page-overview.jpg)
+![The Online Store landing page overview image](./public/images/landing-page-overview.jpg)
 
 This project is for the JS Frameworks course. The task was to build a fully functional online shop using React and Next.js. The project should include fetching and displaying products, displaying product informasjon on a single product details page, search and sort functionality, shopping cart system, checkout success page and contact page.
 
